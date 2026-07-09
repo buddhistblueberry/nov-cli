@@ -17,3 +17,4 @@ def register(provider: Provider) -> None:
 from . import gutenberg  # noqa: E402,F401
 from . import standardebooks  # noqa: E402,F401
 from . import internetarchive  # noqa: E402,F401
+from . import ao3  # noqa: E402,F401

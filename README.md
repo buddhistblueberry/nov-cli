@@ -92,6 +92,10 @@ nov-cli ships with these providers:
   public-domain ebooks with a plain-text reading view.
 - **internetarchive** — [Internet Archive](https://archive.org), a massive
   free library of books and texts (OCR plain-text reading).
+- **ao3** — [Archive of Our Own](https://archiveofourown.org), fanfiction
+  community. Personal reading only; please respect AO3's Terms of Service.
+  (Wattpad is not included — its pages are heavily JavaScript-driven and
+  not scrape-friendly.)
 
 Each provider lives in its own file under `providers/` and follows a tiny
 interface: given a search term it returns books; for a book it returns

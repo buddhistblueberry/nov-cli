@@ -57,4 +57,10 @@ to a git tag so you can check out any point in the project's history.
 
 - `standardebooks` provider: search + plain-text reading (`/text/single-page`),
   with offline-cache and bookmark support like every provider.
-- README: ad-free/tracker-free point; providers list updated.
+- `internetarchive` provider: advancedsearch JSON API + metadata lookup for the
+  item's plain-text (.txt) file.
+- `ao3` provider: fanfiction search + chapter reading (`#chapters .userstuff`).
+  Personal reading only — respects AO3 ToS (see disclaimer.md). Wattpad skipped
+  (heavy JavaScript, not scrape-friendly).
+- README: ad-free point, providers list (4 providers); disclaimer notes AO3 ToS.
+- 28 pytest tests across all providers.

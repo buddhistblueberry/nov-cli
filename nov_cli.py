@@ -4,6 +4,8 @@
 Usage:
     nov-cli "pride and prejudice"        # search, then pick book + part
     nov-cli -p gutenberg "sherlock"      # limit to one provider
+    nov-cli -d "alice"                   # save the chosen part to a .txt file
+    nov-cli -r                           # resume the last-read book
     nov-cli -U                           # self-update from git
 
 Type a query, pick a book, pick a readable part, and it opens in `less`.
@@ -16,7 +18,9 @@ import sys
 
 from core.http import NovHttpError, fetch
 from core.ui import pick, view
+from core import bookmarks, save
 from providers import PROVIDERS
+from providers.base import Novel
 
 
 def search_all(query: str, provider_name: str | None = None) -> list:
@@ -52,6 +56,67 @@ def self_update() -> None:
         print(f"Self-update failed: {msg}", file=sys.stderr)
 
 
+def open_part(novel: Novel, chapter, download: bool) -> int:
+    """Fetch a part, then view it (and optionally save it to disk)."""
+    print("Fetching…")
+    try:
+        text = novel.provider.content(chapter)
+    except NovHttpError as exc:
+        print(f"[error] {exc}", file=sys.stderr)
+        return 1
+
+    if download:
+        path = save.save_chapter(novel.title, chapter.title, text)
+        print(f"Saved: {path}")
+
+    view(text)
+    return 0
+
+
+def resume() -> int:
+    """Let the user jump back into a book they were reading."""
+    entries = bookmarks.all_entries()
+    if not entries:
+        print("No bookmarks yet — read something first.")
+        return 0
+
+    chosen = pick(
+        [(f"{e['title']} — {e.get('part_title', '?')}", e) for e in entries],
+        "Resume",
+    )
+    if not chosen:
+        return 0
+
+    provider = PROVIDERS.get(chosen.get("provider", ""))
+    if not provider:
+        print(f"[error] provider '{chosen.get('provider')}' is no longer available.")
+        return 1
+
+    novel = Novel(
+        title=chosen["title"],
+        url=chosen["url"],
+        author=chosen.get("author"),
+        provider=provider,
+    )
+    try:
+        chapters = provider.chapters(novel)
+    except Exception as exc:
+        print(f"[error] could not list parts: {exc}", file=sys.stderr)
+        return 1
+
+    idx = chosen.get("part_index", 0)
+    if 0 <= idx < len(chapters):
+        chapter = chapters[idx]
+    else:
+        chapter = pick([(c.title, c) for c in chapters], "Part")
+        if not chapter:
+            return 0
+        idx = chapters.index(chapter)
+
+    bookmarks.record(novel, idx, chapter.title)
+    return open_part(novel, chapter, download=False)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="nov-cli",
@@ -60,13 +125,31 @@ def main() -> int:
     parser.add_argument("query", nargs="?", help="search query")
     parser.add_argument("-p", "--provider", help="limit to one provider")
     parser.add_argument(
+        "-d", "--download", action="store_true", help="save the chosen part to a .txt"
+    )
+    parser.add_argument(
+        "-r", "--resume", action="store_true", help="resume a bookmarked book"
+    )
+    parser.add_argument(
+        "--no-cache", action="store_true", help="skip the offline cache"
+    )
+    parser.add_argument(
         "-U", "--update", action="store_true", help="self-update via git pull"
     )
     args = parser.parse_args()
 
+    if args.no_cache:
+        # Disable the offline cache for this run.
+        import core.http
+
+        core.http.CACHING_ENABLED = False
+
     if args.update:
         self_update()
         return 0
+
+    if args.resume:
+        return resume()
 
     if not args.query:
         parser.print_help()
@@ -93,16 +176,10 @@ def main() -> int:
     chapter = pick([(c.title, c) for c in chapters], "Part")
     if not chapter:
         return 0
+    idx = chapters.index(chapter)
 
-    print("Fetching…")
-    try:
-        text = novel.provider.content(chapter)
-    except NovHttpError as exc:
-        print(f"[error] {exc}", file=sys.stderr)
-        return 1
-
-    view(text)
-    return 0
+    bookmarks.record(novel, idx, chapter.title)
+    return open_part(novel, chapter, download=args.download)
 
 
 if __name__ == "__main__":

@@ -3,6 +3,11 @@
 import pytest
 import requests
 
+import core.http
+
+# Unit-testing the network layer shouldn't touch the disk cache.
+core.http.CACHING_ENABLED = False
+
 from core.http import NovHttpError, fetch
 
 

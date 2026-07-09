@@ -16,6 +16,9 @@ book, pick a part, and it opens in `less` — no browser, no app.
 - 🧩 Pluggable **provider** system — add your own sites easily
 - 🛡️ Retries on flaky networks and clean error messages (no raw tracebacks)
 - 🧪 Unit tests run on every push, so a broken provider is caught fast
+- 💾 **Download** any part to a `.txt` file with `-d`
+- 🔖 **Resume** your last-read book with `-r`
+- ☁️ **Offline cache** — re-reads work without the network
 
 ## Install (Termux / Linux)
 
@@ -56,6 +59,9 @@ nov-cli "sherlock holmes"
 |---------|--------------|
 | `nov-cli "query"` | Search, then pick a book and a part |
 | `nov-cli -p gutenberg "query"` | Limit the search to one provider |
+| `nov-cli -d "query"` | Save the chosen part to a `.txt` file |
+| `nov-cli -r` | Resume the last-read bookmarked book |
+| `nov-cli --no-cache "query"` | Skip the offline cache for this run |
 | `nov-cli -U` | Self-update from git |
 | `nov-cli -h` | Show the help text |
 
@@ -94,6 +100,19 @@ site changes its layout, only that one file needs fixing.
 3. Import it in `providers/__init__.py`.
 
 See `disclaimer.md` before scraping any site.
+
+## Local data
+
+nov-cli keeps a little state on your device:
+
+- **Offline cache** — fetched chapters are stored in `~/.cache/nov-cli/`
+  so re-reading works without the network. Clear that folder to force a
+  refresh, or pass `--no-cache`.
+- **Bookmarks** — your last-read position per book lives in
+  `~/.config/nov-cli/bookmarks.json` (used by `-r`). Delete the file to
+  start fresh.
+- **Downloads** — `-d` saves files to `~/nov-cli-books/` as
+  `<Novel> - <Part>.txt`.
 
 ## How it's built
 

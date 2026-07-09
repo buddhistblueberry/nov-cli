@@ -10,6 +10,8 @@ import time
 
 import requests
 
+from . import cache
+
 DEFAULT_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
@@ -26,18 +28,31 @@ class NovHttpError(Exception):
     """
 
 
+# Master switch for the offline cache (toggled by nov-cli's --no-cache).
+CACHING_ENABLED = True
+
+
 def fetch(
     url: str,
     timeout: int = 20,
     retries: int = 3,
     backoff: float = 0.5,
+    use_cache: bool = True,
 ) -> str:
     """Download a URL and return its text content.
 
     Retries `retries` times on connection errors or 5xx server errors,
     waiting `backoff` seconds (doubling each attempt) between tries.
     Raises NovHttpError if every attempt fails.
+
+    With `use_cache` (default), a previously fetched URL is served from
+    disk instead of the network (see core/cache.py).
     """
+    if use_cache and CACHING_ENABLED:
+        cached = cache.get(url)
+        if cached is not None:
+            return cached
+
     last_exc: Exception | None = None
     delay = backoff
     for attempt in range(1, retries + 1):
@@ -46,7 +61,10 @@ def fetch(
                 url, headers=DEFAULT_HEADERS, timeout=timeout
             )
             response.raise_for_status()
-            return response.text
+            text = response.text
+            if use_cache and CACHING_ENABLED:
+                cache.set(url, text)
+            return text
         except requests.RequestException as exc:
             last_exc = exc
             if attempt < retries:

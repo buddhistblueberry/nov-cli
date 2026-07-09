@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nov-cli"
+version = "0.2.0"
+description = "Search and read novels from the web, ani-cli style — built for Termux/Linux."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "GPL-3.0" }
+authors = [{ name = "Buddhist Bluebbery", email = "buddhistblueberry@gmail.com" }]
+keywords = ["cli", "termux", "novels", "webscraping", "python", "reader"]
+dependencies = [
+    "requests>=2.25",
+    "beautifulsoup4>=4.9",
+]
+
+[project.urls]
+Homepage = "https://github.com/buddhistblueberry/nov-cli"
+
+[project.scripts]
+nov-cli = "nov_cli:main"
+
+[tool.setuptools]
+py-modules = ["nov_cli"]
+packages = ["core", "providers"]

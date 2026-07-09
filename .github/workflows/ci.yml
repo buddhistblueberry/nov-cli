@@ -19,10 +19,13 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-dev.txt
 
       - name: Compile check
         run: python -m py_compile nov_cli.py core/*.py providers/*.py
+
+      - name: Unit tests
+        run: pytest -q
 
       - name: Smoke test
         run: python nov_cli.py --help

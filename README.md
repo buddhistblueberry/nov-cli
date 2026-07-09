@@ -14,24 +14,36 @@ book, pick a part, and it opens in `less` — no browser, no app.
 - 📖 Interactive picking with `fzf` (falls back to a numbered menu)
 - 📜 Read in `less` — scroll with the arrow keys, `q` to quit
 - 🧩 Pluggable **provider** system — add your own sites easily
-- ☁️ Built and tested on GitHub; no local toolchain needed
+- 🛡️ Retries on flaky networks and clean error messages (no raw tracebacks)
+- 🧪 Unit tests run on every push, so a broken provider is caught fast
 
 ## Install (Termux / Linux)
+
+**Recommended — pip:**
+
+```bash
+pkg install python fzf less        # Termux; on Debian/Ubuntu use apt
+pip install .
+nov-cli "pride and prejudice"
+```
+
+**Or the one-line script:**
+
+```bash
+bash install.sh
+```
+
+**Or clone + run directly:**
 
 ```bash
 pkg install python fzf less
 git clone https://github.com/buddhistblueberry/nov-cli
 cd nov-cli
 pip install -r requirements.txt
-```
-
-Run it:
-
-```bash
 python nov_cli.py "pride and prejudice"
 ```
 
-Or copy it into your `PATH` so you can call it from anywhere:
+If you cloned it, you can also copy the script into your `PATH`:
 
 ```bash
 cp nov_cli.py "$PREFIX/bin/nov-cli"
@@ -85,11 +97,40 @@ See `disclaimer.md` before scraping any site.
 
 ## How it's built
 
-This project is developed entirely on GitHub. Editing a file in the GitHub
-web editor and pushing it triggers the CI workflow
-(`.github/workflows/ci.yml`), which compiles the code and runs a smoke test
-on GitHub's servers — so you never need a compiler or Python installed
-locally to contribute.
+The code is plain Python with three small pieces:
+
+- `nov_cli.py` — the command-line front end (argument parsing + the
+  search → pick book → pick part → read flow).
+- `core/` — shared helpers: `http.py` (fetching + retries) and `ui.py`
+  (the `fzf` picker and the `less` viewer).
+- `providers/` — one file per website. Each follows the same tiny
+  interface (`search`, `chapters`, `content`), so adding a site means
+  writing one class, not touching the rest of the app.
+
+Every push runs the CI workflow (`.github/workflows/ci.yml`), which
+compiles the code, runs the unit tests in `tests/`, and does a weekly live
+"is the scraper still working?" check. To develop locally:
+
+```bash
+git clone https://github.com/buddhistblueberry/nov-cli
+cd nov-cli
+pip install -r requirements-dev.txt
+pytest -q
+```
+
+## Troubleshooting
+
+- **`nov-cli: command not found`** — you installed with `git clone` but
+  didn't copy `nov_cli.py` to your `PATH`, or `pip install .` didn't put
+  the script on your `PATH`. Use the full path, or re-run `pip install .`.
+- **It opens a numbered menu instead of a fuzzy finder** — `fzf` isn't
+  installed. Run `pkg install fzf` (Termux) or `apt install fzf`.
+- **`[error] could not fetch …`** — usually no internet, or the site
+  blocked the request. nov-cli retries automatically; if it still fails,
+  the site may be down or have changed.
+- **Self-update says "only works inside a git checkout"** — you installed
+  via `pip` from PyPI; update with `pip install --upgrade .` instead, or
+  use the `git clone` method.
 
 ## Disclaimer
 

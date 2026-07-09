@@ -15,3 +15,4 @@ def register(provider: Provider) -> None:
 
 # Built-in providers (each registers itself on import).
 from . import gutenberg  # noqa: E402,F401
+from . import standardebooks  # noqa: E402,F401

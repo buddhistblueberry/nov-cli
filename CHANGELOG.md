@@ -49,5 +49,12 @@ to a git tag so you can check out any point in the project's history.
 
 ### Upcoming (not yet released)
 
-- **Phase 3 providers** — Standard Ebooks, Internet Archive, AO3/Wattpad.
+- **Phase 3 providers** — `standardebooks` added (public-domain, plain-text
+  reading view). Still to come: Internet Archive, AO3/Wattpad.
 - Improved author parsing from Gutenberg search.
+
+## [Unreleased] — 2026-07-09
+
+- `standardebooks` provider: search + plain-text reading (`/text/single-page`),
+  with offline-cache and bookmark support like every provider.
+- README: ad-free/tracker-free point; providers list updated.

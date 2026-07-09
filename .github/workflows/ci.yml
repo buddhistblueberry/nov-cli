@@ -32,4 +32,4 @@ jobs:
 
       - name: Scraper health check
         continue-on-error: true
-        run: python -c "from providers import PROVIDERS; n=PROVIDERS['gutenberg'].search('alice'); print('gutenberg OK, results:', len(n))"
+        run: python -c "from providers import PROVIDERS; n=PROVIDERS['gutenberg'].search('alice'); print('gutenberg OK, results:', len(n)); m=PROVIDERS['standardebooks'].search('pride'); print('standardebooks OK, results:', len(m))"

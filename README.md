@@ -19,6 +19,8 @@ book, pick a part, and it opens in `less` — no browser, no app.
 - 💾 **Download** any part to a `.txt` file with `-d`
 - 🔖 **Resume** your last-read book with `-r`
 - ☁️ **Offline cache** — re-reads work without the network
+- 🚫 **Ad-free & tracker-free** — just text in your terminal, no ads, no
+  accounts, no telemetry. What you read stays on your device.
 
 ## Install (Termux / Linux)
 
@@ -83,9 +85,11 @@ Fetching…
 
 ## Providers
 
-nov-cli ships with one example provider:
+nov-cli ships with these providers:
 
 - **gutenberg** — [Project Gutenberg](https://www.gutenberg.org), public-domain books.
+- **standardebooks** — [Standard Ebooks](https://standardebooks.org), cleaned-up
+  public-domain ebooks with a plain-text reading view.
 
 Each provider lives in its own file under `providers/` and follows a tiny
 interface: given a search term it returns books; for a book it returns

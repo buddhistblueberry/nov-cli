@@ -1,0 +1,9 @@
+{
+  "server": "ia600401.us.archive.org",
+  "dir": "/22/items/prideandprejudice00aust",
+  "files": [
+    {"name": "prideandprejudice00aust_jp2.zip", "format": "JP2ZIP"},
+    {"name": "prideandprejudice00aust_djvu.txt", "format": "DjVuTXT"},
+    {"name": "prideandprejudice00aust_abbyy.gz", "format": "Abbyy"}
+  ]
+}

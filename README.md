@@ -90,6 +90,8 @@ nov-cli ships with these providers:
 - **gutenberg** — [Project Gutenberg](https://www.gutenberg.org), public-domain books.
 - **standardebooks** — [Standard Ebooks](https://standardebooks.org), cleaned-up
   public-domain ebooks with a plain-text reading view.
+- **internetarchive** — [Internet Archive](https://archive.org), a massive
+  free library of books and texts (OCR plain-text reading).
 
 Each provider lives in its own file under `providers/` and follows a tiny
 interface: given a search term it returns books; for a book it returns

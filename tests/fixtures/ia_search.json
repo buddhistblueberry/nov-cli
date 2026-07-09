@@ -1,0 +1,16 @@
+{
+  "response": {
+    "docs": [
+      {
+        "identifier": "prideofflions0000john",
+        "title": "A Pride of Lions",
+        "creator": ["John Brooks"]
+      },
+      {
+        "identifier": "prideandprejudice00aust",
+        "title": "Pride and Prejudice",
+        "creator": "Jane Austen"
+      }
+    ]
+  }
+}

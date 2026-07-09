@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1" # weekly, Monday 06:00 UTC
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile check
+        run: python -m py_compile nov_cli.py core/*.py providers/*.py
+
+      - name: Smoke test
+        run: python nov_cli.py --help
+
+      - name: Scraper health check
+        continue-on-error: true
+        run: python -c "from providers import PROVIDERS; n=PROVIDERS['gutenberg'].search('alice'); print('gutenberg OK, results:', len(n))"
